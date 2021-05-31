@@ -1,0 +1,8 @@
+
+    /**
+     * T_entityColumnDesc_T
+     *
+     * @var T_entityVarType_T
+     * @ORM\Column(type="T_entityColumnType_T", name="`T_entityColumnName_T`", nullable=T_entityColumnNull_T)
+     */
+    protected $T_entityVarName_T;

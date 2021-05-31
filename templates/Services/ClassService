@@ -1,0 +1,129 @@
+<?php
+
+namespace App\Services;
+
+use App\Dtos\T_Class_TDto\RequestDto\T_Class_TCreateDto;
+use App\Dtos\T_Class_TDto\RequestDto\T_Class_TDeleteDto;
+use App\Dtos\T_Class_TDto\RequestDto\T_Class_TSearchParamsDto;
+use App\Dtos\T_Class_TDto\RequestDto\T_Class_TUpdateDto;
+use App\Exceptions\DatabaseException;
+use App\Exceptions\MessageException;
+use App\Exceptions\ServiceException;
+use App\Repositories\Contracts\T_Class_TRepositoryInterface;
+use App\Repositories\Contracts\UnitOfWorkInterface;
+use App\Services\Contracts\T_Class_TServiceInterface;
+use App\Transformers\T_Class_TTransformers\T_Class_TTransformer;
+use Doctrine\DBAL\DBALException;
+use Throwable;
+
+class T_Class_TService implements T_Class_TServiceInterface
+{
+    private $unitOfWork;
+    private $T_class_Ts;
+    private $T_class_TTransformer;
+
+    public function __construct(
+        UnitOfWorkInterface $unitOfWork,
+        T_Class_TRepositoryInterface $T_class_Ts,
+        T_Class_TTransformer $T_class_TTransformer
+    ) {
+        $this->unitOfWork = $unitOfWork;
+        $this->T_class_Ts = $T_class_Ts;
+        $this->T_class_TTransformer = $T_class_TTransformer;
+    }
+
+    /**
+     *
+     * Поиск хэштегов. Если передан идентификатор
+     * будет возвращен один хэштег. Если не передан -
+     * будут возвращены все хэштеги по заказчику.
+     *
+     */
+    public function find(T_Class_TSearchParamsDto $searchParams)
+    {
+        try {
+            $result = $this->unitOfWork->commitTransactional(function () use ($searchParams) {
+                return $this->T_class_Ts->find($searchParams->id, $searchParams->customerId);
+            });
+
+            return is_array($result) ? $this->T_class_TTransformer->transform($result) : null;
+        } catch (Throwable $e) {
+            if ($e instanceof DBALException || $e instanceof DatabaseException) {
+                throw new DatabaseException($e->getMessage());
+            } else {
+                throw new ServiceException($e->getMessage());
+            }
+        }
+    }
+
+    /**
+     *
+     * Создание хэштега
+     *
+     */
+    public function create(T_Class_TCreateDto $T_class_T)
+    {
+        try {
+            $result = $this->unitOfWork->commitTransactional(function () use ($T_class_T) {
+                $newT_Class_T = $this->T_class_Ts->create($T_class_T);
+                $T_class_T->id = $newT_Class_T->getId();
+                return $T_class_T;
+            });
+            return ($result) ? $this->T_class_TTransformer->transform($result) : null;
+        } catch (Throwable $e) {
+            if ($e instanceof DBALException || $e instanceof DatabaseException) {
+                throw new DatabaseException($e->getMessage());
+            } else {
+                throw new ServiceException($e->getMessage());
+            }
+        }
+    }
+
+    /**
+     *
+     * Обновление хэштега
+     *
+     */
+    public function update(T_Class_TUpdateDto $T_class_T)
+    {
+        try {
+            $result = $this->unitOfWork->commitTransactional(function () use ($T_class_T) {
+                $newT_Class_T = $this->T_class_Ts->update($T_class_T);
+                $T_class_T->id = $newT_Class_T->getId();
+                return $T_class_T;
+            });
+            return $result;
+        } catch (Throwable $e) {
+            if ($e instanceof DBALException || $e instanceof DatabaseException) {
+                throw new DatabaseException($e->getMessage());
+            } else {
+                throw new ServiceException($e->getMessage());
+            }
+        }
+    }
+
+    /**
+     *
+     * Пометка хэштега неактивным
+     *
+     */
+    public function delete(T_Class_TDeleteDto $T_class_T)
+    {
+        try {
+            $this->unitOfWork->commitTransactional(function () use ($T_class_T) {
+                $newT_Class_T = $this->T_class_Ts->delete($T_class_T);
+                $T_class_T->id = $newT_Class_T->getId();
+                return $T_class_T;
+            });
+            return true;
+        } catch (Throwable $e) {
+            if ($e instanceof DBALException || $e instanceof DatabaseException) {
+                throw new DatabaseException($e->getMessage());
+            } else if ($e instanceof MessageException) {
+                throw new MessageException($e->getMessage());
+            } else {
+                throw new ServiceException($e->getMessage());
+            }
+        }
+    }
+}

@@ -1,0 +1,104 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Dtos\T_Class_TDto\RequestDto\T_Class_TCreateDto;
+use App\Dtos\T_Class_TDto\RequestDto\T_Class_TDeleteDto;
+use App\Dtos\T_Class_TDto\RequestDto\T_Class_TUpdateDto;
+use App\Entities\T_Class_T\T_Class_T;
+use Doctrine\ORM\Query\ResultSetMapping;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Exceptions\DatabaseException;
+use App\Repositories\Contracts\T_Class_TRepositoryInterface;
+use Throwable;
+
+class DoctrineT_Class_TRepository implements T_Class_TRepositoryInterface
+{
+    protected $resultSetMapping;
+    private $entityManager;
+
+    public function __construct(ResultSetMapping $resultSetMapping, EntityManagerInterface $entityManager)
+    {
+        $this->resultSetMapping = $resultSetMapping;
+        $this->entityManager = $entityManager;
+    }
+
+    public function find(int $id = null, int $customerId = null)
+    {
+        try {
+            $params = [];
+            if ($id != null) {
+                $params["id"] = $id;
+            }
+            $params["customerId"] = $customerId;
+            $queryString = 'SELECT t';
+            $queryString = $queryString . ' FROM App\Entities\T_Class_T\T_Class_T t';
+            $queryString = $queryString . ' WHERE t.removed IS NULL AND t.customerId = :customerId';
+            $queryString = $queryString . ' AND ((t.timestampTo IS NULL) OR (t.timestampTo > CURRENT_TIMESTAMP()))';
+            if ($id != null) {
+                $queryString = $queryString . ' AND t.id = :id';
+            }
+
+            $query = $this->entityManager->createQuery($queryString)->setParameters($params);
+            $T_classes_T = $query->getArrayResult();
+            return $T_classes_T;
+        } catch (Throwable $e) {
+            throw new DatabaseException($e->getMessage());
+        }
+    }
+
+    public function create(T_Class_TCreateDto $T_class_T)
+    {
+        try {
+            $this->resultSetMapping->addEntityResult(T_Class_T::class, 'T_class_T');
+            $this->resultSetMapping->addFieldResult('T_class_T', 'Id', 'id');
+            $sql = 'SELECT * FROM "T_Class_TAdd"(:Value,:CustomerId,:TimestampTo)';
+            $query = $this->entityManager->createNativeQuery($sql, $this->resultSetMapping);
+            $query->setParameter("Value", $T_class_T->value);
+            $query->setParameter("CustomerId", $T_class_T->customerId);
+            $query->setParameter("TimestampTo", $T_class_T->timestampTo);
+            $T_class_T = $query->getOneOrNullResult();
+            return $T_class_T;
+        } catch (Throwable $e) {
+            throw New DatabaseException($e->getMessage());
+        }
+    }
+
+    public function update(T_Class_TUpdateDto $T_class_T)
+    {
+        try {
+            $this->resultSetMapping->addEntityResult(T_Class_T::class, 'T_class_T');
+            $this->resultSetMapping->addFieldResult('T_class_T', 'Result', 'id');
+            $sql = 'SELECT * FROM "T_Class_TUpdate"(:Id,:Value,:CustomerId,:Removed,:TimestampTo)';
+            $query = $this->entityManager->createNativeQuery($sql, $this->resultSetMapping);
+            $query->setParameter("Id", $T_class_T->id);
+            $query->setParameter("CustomerId", $T_class_T->customerId);
+            $query->setParameter("Value", $T_class_T->value);
+            $query->setParameter("Removed", $T_class_T->removed);
+            $query->setParameter("TimestampTo", $T_class_T->timestampTo);
+            $result = $query->getOneOrNullResult();
+
+            return $result;
+        } catch (Throwable $e) {
+            throw New DatabaseException($e->getMessage());
+        }
+    }
+
+    public function delete(T_Class_TDeleteDto $T_class_T)
+    {
+        try {
+            $this->resultSetMapping->addEntityResult(T_Class_T::class, 'T_class_T');
+            $this->resultSetMapping->addFieldResult('T_class_T', 'Result', 'id');
+            $sql = 'SELECT * FROM "T_Class_TRemove"(:Id,:CustomerId,:Removed)';
+            $query = $this->entityManager->createNativeQuery($sql, $this->resultSetMapping);
+            $query->setParameter("Id", $T_class_T->id);
+            $query->setParameter("CustomerId", $T_class_T->customerId);
+            $query->setParameter("Removed", $T_class_T->removed);
+            $result = $query->getOneOrNullResult();
+
+            return $result;
+        } catch (Throwable $e) {
+            throw New DatabaseException($e->getMessage());
+        }
+    }
+}

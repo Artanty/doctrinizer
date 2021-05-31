@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Transformers\T_Class_TTransformers;
+
+use App\Dtos\T_Class_TDto\RequestDto\T_Class_TCreateDto;
+use App\Dtos\T_Class_TDto\T_Class_TDto;
+use AutoMapperPlus\AutoMapper;
+use AutoMapperPlus\Configuration\AutoMapperConfig;
+use AutoMapperPlus\MappingOperation\Operation;
+
+class T_Class_TTransformer
+{
+
+    private $autoMapper;
+
+    public function __construct()
+    {
+        $this->autoMapper = AutoMapper::initialize(function (AutoMapperConfig $config) {
+            $config->registerMapping('array', T_Class_TDto::class);
+            $config->registerMapping(T_Class_TCreateDto::class, T_Class_TDto::class);
+        });
+    }
+
+    public function transform($T_classes_T)
+    {   if (is_array($T_classes_T)) {
+            return $this->autoMapper->mapMultiple($T_classes_T, T_Class_TDto::class);
+        }
+        if ($T_classes_T instanceof T_Class_TCreateDto) {
+            return $this->autoMapper->map($T_classes_T, T_Class_TDto::class);
+        }
+    }
+}

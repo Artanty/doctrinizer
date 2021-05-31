@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Entities\T_Class_T;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * T_entityClassDescription_T
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="`T_entityTableName_T`")
+ */
+class T_Class_T
+{
+    /**
+     * Идентификатор
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\Column(type="bigint", name="`Id`")
+     */
+    protected $id;
+
+    T_entityItems_T
+
+    /**
+     * Признак архивации
+     *
+     * @var integer
+     * @ORM\Column(type="smallint", name="`Removed`", nullable=true)
+     */
+    protected $removed;
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+}

@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Http\Requests\T_Class_TRequests;
+
+use App\Dtos\T_Class_TDto\RequestDto\T_Class_TUpdateDto;
+use Illuminate\Foundation\Http\FormRequest;
+
+class T_Class_TUpdateRequest extends FormRequest
+{
+    private $updateT_Class_TDto;
+
+    public function __construct(T_Class_TUpdateDto $updateT_Class_TDto)
+    {
+        $this->updateT_Class_TDto = $updateT_Class_TDto;
+    }
+
+    public function authorize()
+    {
+        return true;
+    }
+
+    public function rules()
+    {
+        return [
+           
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            '*.required' => 'Value required..',
+        ];
+    }
+
+    public function data()
+    {
+        $this->updateT_Class_TDto->id = $this->id;
+        $this->updateTagDto->value = $this->value;
+        $this->updateTagDto->removed = $this->removed ?? 0;
+        $this->updateTagDto->timestampTo = $this->timestampTo ?? null;
+        $this->updateTagDto->customerId = $this->user()->getCustomerId();
+        return $this->updateTagDto;
+    }
+}

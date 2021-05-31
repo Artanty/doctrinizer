@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		.resultContaienr > div{
+			width: 400px;
+    		overflow-x: auto;
+		}
+	</style>
+</head>
+<body>
+<form id="entityMainDataForm">
+	<label>
+		Entity
+		<input class="entityMainDataFormInput" name="T_Class_T">
+	</label>
+	<label>
+		Описание класса
+		<input class="entityMainDataFormInput" name="T_entityClassDescription_T">
+	</label>
+	<label>
+		Table name
+		<input class="entityMainDataFormInput" name="T_entityTableName_T">
+	</label>
+
+</form>
+<form id="entityItemsForm">
+ <input class="entityItemsFormInput" id="foo01" name="T_entityColumnDesc_T" placeholder="Описание"> 
+ <input class="entityItemsFormInput" id="foo02" name="T_entityVarType_T" placeholder="Тип переменной"/> 
+ <input class="entityItemsFormInput" id="foo03" name="T_entityColumnType_T" placeholder="Тип столбца БД">
+ <input class="entityItemsFormInput" id="foo04" name="T_entityColumnName_T" placeholder="Имя столбца БД"/> 
+ <input class="entityItemsFormInput" id="foo05" name="T_entityColumnNull_T" placeholder="IS NULL?"> 
+ <input class="entityItemsFormInput" id="foo06" name="T_entityVarName_T" placeholder="Имя переменной">  
+ <br>
+ <span id="fooBar">
+ </span>
+ <input type="button" value="+" onclick="addEntityItemRow()"/>
+</form>
+<button onClick="submit()">Собрать файлы</button>
+<br>
+<button onClick="download()">Скачать все</button>
+<br>
+<h2>Показать:</h2>
+<button onClick="showResult(EntityResult)">Entity</button>
+<button onClick="showResult(ResponseDtoResult)">ResponseDto</button>
+<button onClick="showResult(CreateDtoResult)">CreateDto</button>
+<button onClick="showResult(UpdateDtoResult)">UpdateDto</button>
+<button onClick="showResult(DeleteDtoResult)">DeleteDto</button>
+<button onClick="showResult(SearchDtoResult)">SearchDto</button>
+
+
+<button onClick="showResult(ControllerResult)">Controller</button>
+<button onClick="showResult(CreateRequestResult)">CreateRequest</button>
+<button onClick="showResult(UpdateRequestResult)">UpdateRequest</button>
+<button onClick="showResult(DeleteRequestResult)">DeleteRequest</button>
+<button onClick="showResult(SearchRequestResult)">SearchRequest</button>
+
+<button onClick="showResult(ServiceInterfaceResult)">ServiceInterface</button>
+<button onClick="showResult(ServiceResult)">Service</button>
+
+<button onClick="showResult(RepositoryInterfaceResult)">RepositoryInterface</button>
+<button onClick="showResult(RepositoryResult)">Repository</button>
+<button onClick="showResult(TransformerResult)">Transformer</button>
+
+<pre id="resultContainer">
+	
+</pre>
+
+<script src="./js/entityItem.js"></script>
+<script src="./js/main.js"></script>
+<script>
+	G_mainForm = []
+	G_itemsForm = []
+	
+	DtoTemplate = getTemplate('./templates/Dtos/ClassDto/Dto')
+	DtoItemTemplate = getTemplate('./templates/Dtos/ClassDto/_dtoItem')
+	ResponseDtoResult = null
+	CreateDtoResult = null
+	UpdateDtoResult = null
+	DeleteDtoResult = null
+	SearchDtoResult = null
+
+	EntityTemplate = getTemplate('./templates/Entities/Class/Class')
+	EntityItemTemplate = getTemplate('./templates/Entities/Class/_entityItem')
+	EntityResult = null
+
+	ControllerTemplate = getTemplate('./templates/Http/Controller/Api/Controller')
+	ControllerResult = null
+
+	RequestsTemplate = getTemplate('/templates/Http/Requests/ClassRequests/MethodRequest')
+	RequestItemTemplate = getTemplate('/templates/Http/Requests/ClassRequests/_requestItem')
+	CreateRequestResult = null
+	UpdateRequestResult = null
+	DeleteRequestResult = null
+	SearchRequestResult = null
+
+	ServiceInterfaceTemplate = getTemplate('/templates/Services/Contracts/ClassServiceInterface')
+	ServiceInterfaceResult = null
+	ServiceTemplate = getTemplate('/templates/Services/ClassService')
+	ServiceResult = null
+
+	RepositoryInterfaceTemplate = getTemplate('/templates/Repositories/Contracts/ClassRepositoryInterface')
+	RepositoryInterfaceResult = null
+	RepositoryTemplate = getTemplate('/templates/Repositories/DoctrineClassRepository')
+	RepositoryResult = null
+
+	TransformerTemplate = getTemplate('/templates/Transformers/ClassTransformers/ClassTransformer')
+	TransformerResult = null
+
+	mockEntityInputs()
+	mockMainForm()
+
+	function submit() {
+		G_mainForm = getInputsArr('entityMainDataFormInput')
+		G_itemsForm = getArrOfSameNamesDynamicInputs('entityItemsFormInput', 6)
+	    
+	    makeEntity()
+	    makeDtos()
+	    makeController()
+	    makeRequests()
+		makeServiceInterface()
+		makeService()
+		makeRepositoryInterface()
+		makeRepository()
+		makeTransformer()
+    }
+	
+    function makeEntity () {
+	    EntityTemplate.then(template => {
+	    	EntityItemTemplate.then(templateItem => {
+		    	
+			    const entityItemsString = fillItems(templateItem, G_itemsForm)
+			    template = template.replace(new RegExp('T_entityItems_T'), entityItemsString);
+
+		 		EntityResult = fillTemplateFromArrayOfObjects(G_mainForm, template)
+		    })
+	    })
+	}
+	function makeDtos () {
+		DtoTemplate.then(template => {
+			DtoItemTemplate.then(templateItem => {
+
+				const dtoItemsString = fillItems(templateItem, G_itemsForm)
+				template = template.replace(new RegExp('T_dtoItems_T'), dtoItemsString);
+
+				const G_mainFormResponse = buildMethodsWithItems(G_mainForm, '')
+				ResponseDtoResult = fillTemplateFromArrayOfObjects(G_mainFormResponse, template)
+
+				const G_mainFormCreate = buildMethodsWithItems(G_mainForm, 'Create')
+				CreateDtoResult = fillTemplateFromArrayOfObjects(G_mainFormCreate, template)
+
+				const G_mainFormUpdate = buildMethodsWithItems(G_mainForm, 'Update')
+				UpdateDtoResult = fillTemplateFromArrayOfObjects(G_mainFormUpdate, template)
+
+				const G_mainFormDelete = buildMethodsWithItems(G_mainForm, 'Delete')
+				DeleteDtoResult = fillTemplateFromArrayOfObjects(G_mainFormDelete, template)
+
+				const G_mainFormSearch = buildMethodsWithItems(G_mainForm, 'Search')
+				SearchDtoResult = fillTemplateFromArrayOfObjects(G_mainFormSearch, template)
+
+
+			})
+		})
+	}
+	
+
+	function makeController () {
+		ControllerTemplate.then(template => {
+			ControllerResult = fillTemplateFromArrayOfObjects(G_mainForm, template)
+		})
+	}
+
+	function makeRequests () {
+		RequestsTemplate.then(template => {
+			RequestItemTemplate.then(templateItem => {
+				const requestItemsString = fillItems(templateItem, G_itemsForm)
+				template = template.replace(new RegExp('T_requestItems_T'), requestItemsString);
+
+				const G_mainFormCreate = buildMethodsWithItems(G_mainForm, 'Create')
+				CreateRequestResult = fillTemplateFromArrayOfObjects(G_mainFormCreate, template)
+
+				const G_mainFormUpdate = buildMethodsWithItems(G_mainForm, 'Update')
+				UpdateRequestResult = fillTemplateFromArrayOfObjects(G_mainFormUpdate, template)
+
+				const G_mainFormDelete = buildMethodsWithItems(G_mainForm, 'Delete')
+				DeleteRequestResult = fillTemplateFromArrayOfObjects(G_mainFormDelete, template)
+
+				const G_mainFormSearch = buildMethodsWithItems(G_mainForm, 'Search')
+				SearchRequestResult = fillTemplateFromArrayOfObjects(G_mainFormSearch, template)
+			})
+		})
+	}
+
+	function makeServiceInterface () {
+		ServiceInterfaceTemplate.then(template => {
+			ServiceInterfaceResult = fillTemplateFromArrayOfObjects(G_mainForm, template)
+		})
+	}
+
+	function makeService () {
+		ServiceTemplate.then(template => {
+			ServiceResult = fillTemplateFromArrayOfObjects(G_mainForm, template)
+		})
+	}
+
+	function makeRepositoryInterface () {
+		RepositoryInterfaceTemplate.then(template => {
+			RepositoryInterfaceResult = fillTemplateFromArrayOfObjects(G_mainForm, template)
+		})
+	}
+
+	function makeRepository () {
+		RepositoryTemplate.then(template => {
+			RepositoryResult = fillTemplateFromArrayOfObjects(G_mainForm, template)
+		})
+	}
+
+	function makeTransformer () {
+		TransformerTemplate.then(template => {
+			TransformerResult = fillTemplateFromArrayOfObjects(G_mainForm, template)
+		})
+	}
+
+	const pathAndName = {
+		EntityResult: ['Entities/T_Class_T', 'T_Class_T.php'],
+		ResponseDtoResult: ['Dtos/T_Class_TDto', 'T_Class_TDto.php'],
+		CreateDtoResult: ['Dtos/T_Class_TDto/RequestDto', 'T_Class_TCreateDto.php'],
+		UpdateDtoResult: ['Dtos/T_Class_TDto/RequestDto', 'T_Class_TUpdateDto.php'],
+		DeleteDtoResult: ['Dtos/T_Class_TDto/RequestDto', 'T_Class_TDeleteDto.php'],
+		SearchDtoResult: ['Dtos/T_Class_TDto/RequestDto', 'T_Class_TSearchParamsDto.php'],
+		ControllerResult: ['Http/Controller/Api', 'T_Class_TController.php'],
+		CreateRequestResult: ['Http/Requests/T_Class_TRequests', 'T_Class_TCreateRequest.php'],
+		UpdateRequestResult: ['Http/Requests/T_Class_TRequests', 'T_Class_TUpdateRequest.php'],
+		DeleteRequestResult: ['Http/Requests/T_Class_TRequests', 'T_Class_TDeleteRequest.php'],
+		SearchRequestResult: ['Http/Requests/T_Class_TRequests', 'T_Class_TSearchRequest.php'],
+		ServiceInterfaceResult: ['Services/Contracts', 'T_Class_TServiceInterface.php'],
+		ServiceResult: ['Services', 'T_Class_TService.php'],
+		RepositoryInterfaceResult: ['Repositories/Contracts', 'T_Class_TRepositoryInterface.php'],
+		RepositoryResult: ['Repositories', 'DoctrineT_Class_TRepository.php'],
+		TransformerResult: ['Transformers/T_Class_TTransformers', 'T_Class_TTransformer.php']
+	}
+	  
+</script>
+
+<script src="./node_modules/file-saver/dist/FileSaver.min.js"></script>
+<script src="./node_modules/jszip/dist/jszip.min.js"></script>
+
+<script>
+	var zip = new JSZip();
+
+	/**
+	 * Пример того, что получается в каждой итерации:
+	 * 
+	 * zip.folder("Services/Contracts").file("TagServiceInterface.php", ServiceInterfaceResult)
+	 * путь, имя файла, контент - запаковываем в нужной структуре
+	 * С - это ClassName
+	 */
+	function download () {
+		Object.keys(pathAndName).forEach(key => {
+			const C = G_mainForm[0].value
+			zip.folder(rC(pathAndName[key][0],C)).file(rC(pathAndName[key][1],C), window[key])
+		})
+		zip.generateAsync({type:"blob"})
+		.then(function(content) {
+		    saveAs(content, "App.zip")
+		})
+	}
+	
+</script>
+<script src="./js/mock.js"></script>
+
+
+</body>
+</html>
+

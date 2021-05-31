@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\T_Class_TRequests\T_Class_TCreateRequest;
+use App\Http\Requests\T_Class_TRequests\T_Class_TDeleteRequest;
+use App\Http\Requests\T_Class_TRequests\T_Class_TSearchRequest;
+use App\Http\Requests\T_Class_TRequests\T_Class_TUpdateRequest;
+use App\Services\Contracts\T_Class_TServiceInterface;
+
+class T_Class_TController extends Controller
+{
+    public $T_class_TService;
+
+    public function __construct(T_Class_TServiceInterface $T_class_TService)
+    {
+        $this->T_class_TService = $T_class_TService;
+    }
+
+    public function create(T_Class_TCreateRequest $request)
+    {
+        $data = $request->data();
+        $result = $this->T_class_TService->create($data);
+        return response()->json(["errorCode" => 0, "errorMessage" => "", "data" => $result], 200);
+    }
+
+    public function update(T_Class_TUpdateRequest $request)
+    {
+        $data = $request->data();
+        $result = $this->T_class_TService->update($data);
+        return response()->json(["errorCode" => 0, "errorMessage" => "", "data" => $result], 200);
+    }
+
+    public function delete(T_Class_TDeleteRequest $request)
+    {
+        $data = $request->data();
+        $result = $this->T_class_TService->delete($data);
+        return response()->json(["errorCode" => 0, "errorMessage" => "", "data" => $result], 200);
+    }
+
+    public function search(T_Class_TSearchRequest $request)
+    {
+        $data = $request->data();
+        $result = $this->T_class_TService->find($data);
+        return response()->json(["errorCode" => 0, "errorMessage" => "", "data" => $result], 200);
+    }
+}

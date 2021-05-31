@@ -1,0 +1,13 @@
+/node_modules
+/vendor
+/.idea
+.env
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+.idea
+composer.lock
+.DS_Store
+Thumbs.db
