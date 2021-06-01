@@ -1,13 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
-	<style type="text/css">
-		.resultContaienr > div{
-			width: 400px;
-    		overflow-x: auto;
-		}
-	</style>
+	<title>Doctrinizer</title>
 </head>
 <body>
 <form id="entityMainDataForm">
@@ -37,9 +31,9 @@
  </span>
  <input type="button" value="+" onclick="addEntityItemRow()"/>
 </form>
-<button onClick="submit()">Собрать файлы</button>
+<button onClick="submit()">1 Собрать файлы</button>
 <br>
-<button onClick="download()">Скачать все</button>
+<button onClick="download()">2 Скачать все</button>
 <br>
 <h2>Показать:</h2>
 <button onClick="showResult(EntityResult)">Entity</button>
@@ -243,8 +237,6 @@
 	  
 </script>
 
-<!-- <script src="./node_modules/file-saver/dist/FileSaver.min.js"></script>
-<script src="./node_modules/jszip/dist/jszip.min.js"></script> -->
 <script src="./js/libs/FileSaver.min.js"></script>
 <script src="./js/libs/jszip.min.js"></script>
 

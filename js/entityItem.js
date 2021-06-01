@@ -61,7 +61,7 @@ function addEntityItemRow() {
 
 	var element = document.createElement("input");
 	element.setAttribute("type", "button");
-	element.setAttribute("value", "Remove");
+	element.setAttribute("value", "-");
 	element.setAttribute("id", fooId+x+i);
 	element.setAttribute("name", fooId+x+i);
 	element.setAttribute("onclick", "removeEntityItemRow(this)");
