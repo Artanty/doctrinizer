@@ -1,6 +1,7 @@
 /node_modules
 /vendor
 /.idea
+/.vscode
 .env
 .phpunit.result.cache
 Homestead.json
@@ -11,3 +12,4 @@ yarn-error.log
 composer.lock
 .DS_Store
 Thumbs.db
+
