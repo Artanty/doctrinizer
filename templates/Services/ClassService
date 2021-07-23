@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Dtos\T_Class_TDto\RequestDto\T_Class_TCreateDto;
 use App\Dtos\T_Class_TDto\RequestDto\T_Class_TDeleteDto;
-use App\Dtos\T_Class_TDto\RequestDto\T_Class_TSearchParamsDto;
+use App\Dtos\T_Class_TDto\RequestDto\T_Class_TSearchDto;
 use App\Dtos\T_Class_TDto\RequestDto\T_Class_TUpdateDto;
 use App\Exceptions\DatabaseException;
 use App\Exceptions\MessageException;
@@ -39,11 +39,11 @@ class T_Class_TService implements T_Class_TServiceInterface
      * будут возвращены все хэштеги по заказчику.
      *
      */
-    public function find(T_Class_TSearchParamsDto $searchParams)
+    public function find(T_Class_TSearchDto $T_class_T)
     {
         try {
-            $result = $this->unitOfWork->commitTransactional(function () use ($searchParams) {
-                return $this->T_class_Ts->find($searchParams->id, $searchParams->customerId);
+            $result = $this->unitOfWork->commitTransactional(function () use ($T_class_T) {
+                return $this->T_class_Ts->find($T_class_T->id, $T_class_T->customerId);
             });
 
             return is_array($result) ? $this->T_class_TTransformer->transform($result) : null;

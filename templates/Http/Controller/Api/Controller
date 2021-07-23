@@ -42,7 +42,7 @@ class T_Class_TController extends Controller
     public function search(T_Class_TSearchRequest $request)
     {
         $data = $request->data();
-        $result = $this->T_class_TService->find($data);
+        $result = $this->T_class_TService->search($data);
         return response()->json(["errorCode" => 0, "errorMessage" => "", "data" => $result], 200);
     }
 }

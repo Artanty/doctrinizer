@@ -26,14 +26,6 @@ class T_Class_T
     T_entityItems_T
 
     /**
-     * Признак архивации
-     *
-     * @var integer
-     * @ORM\Column(type="smallint", name="`Removed`", nullable=true)
-     */
-    protected $removed;
-
-    /**
      * @return mixed
      */
     public function getId()
