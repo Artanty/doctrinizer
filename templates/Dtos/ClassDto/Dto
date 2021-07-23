@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Dtos\T_Class_TDto;
+namespace App\Dtos\RequestDto\T_Class_TDto;
 
 class T_Class_TT_Method_TDto
 {

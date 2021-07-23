@@ -34,16 +34,16 @@ class T_Class_TService implements T_Class_TServiceInterface
 
     /**
      *
-     * Поиск хэштегов. Если передан идентификатор
-     * будет возвращен один хэштег. Если не передан -
-     * будут возвращены все хэштеги по заказчику.
+     * Поиск итемов. Если передан идентификатор
+     * будет возвращен один итем. Если не передан -
+     * будут возвращены все итемы по заказчику.
      *
      */
-    public function find(T_Class_TSearchDto $T_class_T)
+    public function search(T_Class_TSearchDto $T_class_T)
     {
         try {
             $result = $this->unitOfWork->commitTransactional(function () use ($T_class_T) {
-                return $this->T_class_Ts->find($T_class_T->id, $T_class_T->customerId);
+                return $this->T_class_Ts->search($T_class_T);
             });
 
             return is_array($result) ? $this->T_class_TTransformer->transform($result) : null;
@@ -58,7 +58,7 @@ class T_Class_TService implements T_Class_TServiceInterface
 
     /**
      *
-     * Создание хэштега
+     * Создание итема
      *
      */
     public function create(T_Class_TCreateDto $T_class_T)
@@ -81,7 +81,7 @@ class T_Class_TService implements T_Class_TServiceInterface
 
     /**
      *
-     * Обновление хэштега
+     * Обновление итема
      *
      */
     public function update(T_Class_TUpdateDto $T_class_T)

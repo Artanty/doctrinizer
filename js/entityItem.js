@@ -27,7 +27,7 @@ function addEntityItemRow() {
 		//Assign different attributes to the element.
 		element.setAttribute("type", fooId+x+i);
 		element.setAttribute("id", fooId+x+i);
-		element.setAttribute("class", "entityItemsFormInput");
+		element.setAttribute("class", "entityItemsFormInput row_" + x);
 		if(i==1){
 			element.setAttribute("name", "T_entityColumnDesc_T");
 			element.setAttribute("placeholder", "Описание");

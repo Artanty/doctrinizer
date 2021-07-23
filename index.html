@@ -20,12 +20,12 @@
  
 </form>
 <form id="entityItemsForm">
- <input class="entityItemsFormInput" id="foo01" name="T_entityColumnDesc_T" placeholder="Описание"> 
- <input class="entityItemsFormInput" id="foo02" name="T_entityVarType_T" placeholder="Тип переменной"/> 
- <input class="entityItemsFormInput" id="foo03" name="T_entityColumnType_T" placeholder="Тип столбца БД">
- <input class="entityItemsFormInput" id="foo04" name="T_entityColumnName_T" placeholder="Имя столбца БД"/> 
- <input class="entityItemsFormInput" id="foo05" name="T_entityColumnNull_T" placeholder="IS NULL?"> 
- <input class="entityItemsFormInput" id="foo06" name="T_entityVarName_T" placeholder="Имя переменной">  
+ <input class="entityItemsFormInput row_0" id="foo01" name="T_entityColumnDesc_T" placeholder="Описание"> 
+ <input class="entityItemsFormInput row_0" id="foo02" name="T_entityVarType_T" placeholder="Тип переменной"/> 
+ <input class="entityItemsFormInput row_0" id="foo03" name="T_entityColumnType_T" placeholder="Тип столбца БД">
+ <input class="entityItemsFormInput row_0" id="foo04" name="T_entityColumnName_T" placeholder="Имя столбца БД"/> 
+ <input class="entityItemsFormInput row_0" id="foo05" name="T_entityColumnNull_T" placeholder="IS NULL?"> 
+ <input class="entityItemsFormInput row_0" id="foo06" name="T_entityVarName_T" placeholder="Имя переменной">  
  <br>
  <span id="fooBar">
  </span>
@@ -35,6 +35,7 @@
 <br>
 <button onClick="download()">2 Скачать все</button>
 <br>
+<button onClick="mockEntityInputsMass()">mockEntityInputsMass</button>
 <h2>Показать:</h2>
 <button onClick="showResult(EntityResult)">Entity</button>
 <button onClick="showResult(ResponseDtoResult)">ResponseDto</button>
