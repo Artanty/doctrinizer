@@ -14,26 +14,26 @@ function mockEntityInputs () {
     }) 
 }
 
-function mockEntityInputsMass () {
-	const mockInputRowData = 
-	[
-		[
-			{T_entityColumnDesc_T: 'Слов222а1'},
-			{T_entityVarType_T: 'string'},
-			{T_entityColumnType_T: 'string'},
-			{T_entityColumnName_T: 'value'},
-			{T_entityColumnNull_T: 'true'},
-			{T_entityVarName_T: 'value'}
-		],
-		[
-			{T_entityColumnDesc_T: 'Слова2111'},
-			{T_entityVarType_T: 'string'},
-			{T_entityColumnType_T: 'string'},
-			{T_entityColumnName_T: 'value2'},
-			{T_entityColumnNull_T: 'true'},
-			{T_entityVarName_T: 'value2'}
-		]
-	]
+function mockEntityInputsMass (mockInputRowData) {
+	// const mockInputRowData = 
+	// [
+	// 	[
+	// 		{T_entityColumnDesc_T: 'Слов222а1'},
+	// 		{T_entityVarType_T: 'string'},
+	// 		{T_entityColumnType_T: 'string'},
+	// 		{T_entityColumnName_T: 'value'},
+	// 		{T_entityColumnNull_T: 'true'},
+	// 		{T_entityVarName_T: 'value'}
+	// 	],
+	// 	[
+	// 		{T_entityColumnDesc_T: 'Слова2111'},
+	// 		{T_entityVarType_T: 'string'},
+	// 		{T_entityColumnType_T: 'string'},
+	// 		{T_entityColumnName_T: 'value2'},
+	// 		{T_entityColumnNull_T: 'true'},
+	// 		{T_entityVarName_T: 'value2'}
+	// 	]
+	// ]
 	mockInputRowData.forEach((el, i) => {
 		let itemClass = document.getElementsByClassName('row_' + i)
 		Array.prototype.forEach.call(itemClass, function(input, i2) {
@@ -43,11 +43,6 @@ function mockEntityInputsMass () {
 			addEntityItemRow()
 	    }
 	})
-	// const json = JSON.stringify(mockInputRowData);
-	// console.log(json)
-	// const dat = JSON.parse(json)
-	// console.log(dat)
-	// createNoteInCollectionApi(json)
 }
 
 const apiKey = '$2b$10$SU0HWnuoYolbM9jXGcV85uM6N5L/VOOavCZzeibovAJRp8EkySrSW'
@@ -63,11 +58,10 @@ function getSchema () {
 function saveBinToCollectionApi(){
 
 	const json = {
-		// main:  JSON.stringify(getMainForm()),
-		// items: JSON.stringify(getSchema())
 		main: getMainForm(),
 		items: getSchema()
 	}
+
 	let req = new XMLHttpRequest();
 
 	req.onreadystatechange = () => {
@@ -98,6 +92,8 @@ function createCollectionApi () {
 	req.setRequestHeader("X-Master-Key", apiKey);
 	req.send();
 }
+hiddenBodies = []
+collectionList = document.getElementById('collectionList')
 
 function getCollectionApi () {
 	let req = new XMLHttpRequest();
@@ -110,6 +106,14 @@ function getCollectionApi () {
 	    	console.log(el)
 	    	getBin(el.record).then(binContent => {
 	    		console.log(binContent)
+	    		// hiddenBodies.push(binContent)
+	    		let item = JSON.parse(binContent)
+	    		hiddenBodies.push(item)
+	    		let a = document.createElement('a');
+				a.setAttribute('class', 'collectionListItem')
+				a.setAttribute('itemId', item.metadata.id)
+				a.innerHTML = item.record.main[0]['value']
+	    		collectionList.append(a)
 	    	})
 	    })
 	  }
@@ -119,6 +123,15 @@ function getCollectionApi () {
 	req.setRequestHeader("X-Master-Key", apiKey);
 	req.send();
 }
+
+
+document.body.addEventListener('click', function (event) {
+    if (event.target.className === 'collectionListItem') {
+    	const itemId = event.target.getAttribute('itemId')
+    	const elem = hiddenBodies.find(el => el.metadata.id === itemId)
+		mockEntityInputsMass(elem.record.items)
+    }
+}, false);
 
 // function getOneBin () {
 // 	let req = new XMLHttpRequest();
@@ -163,3 +176,7 @@ function mockMainForm () {
 
 
 // https://jsonbin.io/api-reference/v3/bins/read
+
+// доделать 
+// 1 вставку из загруженного массива в MainForm
+// 2 удаление рядов перед вставкой новых
